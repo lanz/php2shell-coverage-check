@@ -1,0 +1,3 @@
+# Keep LF everywhere, so scripts and fixtures are identical on every platform.
+* text=auto eol=lf
+*.nessus -text

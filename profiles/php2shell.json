@@ -1,0 +1,35 @@
+{
+  "id": "php2shell",
+  "name": "PHP2Shell",
+  "summary": "Pre-authentication remote code execution in the PHP interpreter (any SAPI that serves web requests).",
+  "cves": ["CVE-2026-109618", "CVE-2026-109619"],
+  "detection": {
+    "first_plugin_published": "2026-10-21",
+    "min_feed": "202610210000",
+    "recommended_feed": "202610240000",
+    "notes": "Plugin 369483 and the first distro checks were published on 2026-10-21. Distro and unpatched checks kept arriving through 2026-10-23, so a feed from 2026-10-21 to 2026-10-23 may lack some of them."
+  },
+  "inventory_plugins": {
+    "48243": {"name": "PHP Version Detection", "kind": "remote"},
+    "58987": {"name": "PHP Unsupported Version Detection", "kind": "remote"},
+    "216936": {"name": "PHP Scripting Language Installed (Unix)", "kind": "local"},
+    "200476": {"name": "PHP Scripting Language Installed (Windows)", "kind": "local"}
+  },
+  "scan_info_plugin": 19506,
+  "versions": {
+    "fixed": {"8.2": "8.2.35", "8.3": "8.3.36", "8.4": "8.4.27", "8.5": "8.5.12"},
+    "earliest_affected": "5.4",
+    "first_unaffected_branch": "8.6",
+    "no_official_fix": "7.4 to 8.1 have only minimal source backports from the PHP security team; 7.3 and older are end-of-life."
+  },
+  "mitigations": [
+    "Update PHP to 8.2.35, 8.3.36, 8.4.27 or 8.5.12, or apply your distribution's patched package. Updating is the only complete fix.",
+    "Until then: set memory_limit=-1 in a way applications can't override, and session.upload_progress.enabled=0. On PHP 8.5, also set fatal_error_backtraces=0. Restart every PHP worker after the change. These reduce exposure but don't make an installation safe.",
+    "PHP 8.1 and older have no official release: upgrade, or isolate or take the system offline."
+  ],
+  "references": [
+    {"title": "Tenable Research PHP2Shell FAQ", "url": "https://www.tenable.com/blog/php2shell-cve-2026-109618-cve-2026-109619-frequently-asked-questions-about-critical-php-remote"},
+    {"title": "Plugins for CVE-2026-109618", "url": "https://www.tenable.com/cve/CVE-2026-109618/plugins"},
+    {"title": "Plugins for CVE-2026-109619", "url": "https://www.tenable.com/cve/CVE-2026-109619/plugins"}
+  ]
+}
