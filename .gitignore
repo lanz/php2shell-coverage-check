@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+# Snapshots and scan exports hold internal host data; never commit them.
+*.nessus
+snapshot*.json
