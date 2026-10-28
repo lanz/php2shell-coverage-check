@@ -104,3 +104,29 @@ def test_latest_scan_info_wins():
     cc.set_scan(h, cc.parse_scan_info(SCAN_INFO_NEW), '2026-10-25T00:00:00Z')
     cc.set_scan(h, cc.parse_scan_info(SCAN_INFO_OLD_FEED), '2026-09-11T00:00:00Z')
     assert h['scan']['feed'] == '202610250523'
+
+
+def test_distro_php_on_a_branch_without_a_fix_needs_unpatched_checks(profile):
+    # Some vendors won't fix branches PHP no longer supports; only the unpatched checks report them.
+    v = check(profile, host([(216936, PHP_UNIX_DISTRO)], scan=SCAN_INFO_NO_UNPATCHED))
+    assert v['verdict'] == cc.UNVERIFIED and 'no upstream fix' in v['reason'] and 'Unpatched' in v['action']
+    assert check(profile, host([(216936, PHP_UNIX_DISTRO)]))['verdict'] == cc.NO_FINDING
+    fixed = check(profile, host([(216936, PHP_UNIX_DISTRO)], [(370210, 'FIXED')], scan=SCAN_INFO_NO_UNPATCHED))
+    assert fixed['verdict'] == cc.PATCHED
+
+
+def test_note_when_the_scan_predates_php_fpm_detection(profile):
+    before = SCAN_INFO_NEW.replace('202610250523', '202610260000')
+    v = check(profile, host([(216936, PHP_UNIX_DISTRO)], scan=before))
+    assert any('PHP-FPM' in n and '202610271613' in n for n in v['notes'])
+    after = SCAN_INFO_NEW.replace('202610250523', '202610280100')
+    assert not any('PHP-FPM' in n for n in check(profile, host([(216936, PHP_UNIX_DISTRO)], scan=after))['notes'])
+    # The Unix detection change doesn't apply to hosts with Windows installs.
+    windows = check(profile, host([(200476, PHP_UNIX_COMPONENT_PATCHED)], scan=before))
+    assert not any('PHP-FPM' in n for n in windows['notes'])
+
+
+def test_version_wrapped_in_markup_is_still_graded(profile):
+    # A version read from a phpinfo() page can carry its surrounding HTML.
+    assert cc.grade('</td><td class="v">8.4.27 </td>', profile) == ('fixed', None)
+    assert cc.grade('</td><td class="v">8.4.26 </td>', profile) == ('fixed-available', '8.4.27')

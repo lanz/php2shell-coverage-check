@@ -1,6 +1,8 @@
 """Collection from .nessus files, the VM API and the Security Center API, and the CLI."""
 
 import argparse
+import csv
+import io
 import json
 import os
 import zipfile
@@ -231,6 +233,8 @@ def test_cli_report_and_targets(tmp_path, profile, capsys):
     cc.main(['report', '--snapshot', snap, '--format', 'csv'])
     csv_out = capsys.readouterr().out
     assert "'=cmd|x" in csv_out  # spreadsheet formulas neutralized
+    rows = list(csv.DictReader(io.StringIO(csv_out)))
+    assert {r['report_paranoia'] for r in rows} == {'normal'}
 
     cc.main(['report', '--snapshot', snap, '--format', 'json', '--verdict', 'unverified'])
     assert [h['ip'] for h in json.loads(capsys.readouterr().out)['hosts']] == ['192.0.2.31']

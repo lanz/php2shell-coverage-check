@@ -4,7 +4,7 @@ description: Checks that Tenable scanning is set up to detect PHP2Shell on every
 license: MIT
 metadata:
   author: Lance Duvall
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # PHP2Shell Coverage Check
@@ -82,7 +82,13 @@ saves a local snapshot; `report` and `targets` work offline from it.
 
 See `references/verdicts.md` for each reason and its fix. Always report the notes:
 distro-managed PHP whose version alone can't show a backported fix, scans from the first
-days of coverage, and "Scan for Unpatched Vulnerabilities" turned off.
+days of coverage, scans that predate PHP-FPM detection (feed 202610271613), and "Scan for
+Unpatched Vulnerabilities" turned off.
+
+PHP2Shell is in the CISA KEV catalog and exploited in the wild. When you give the
+interim mitigations, include the profile's cautions: restart every PHP worker, don't use
+`RLIMIT_AS` or `RLIMIT_DATA` as a memory cap, and test 8.4.27 and 8.5.12 for the
+SimpleXML regression before a broad rollout.
 
 **Important limits to mention:**
 

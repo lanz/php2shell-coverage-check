@@ -45,7 +45,7 @@ import zipfile
 from pathlib import Path
 from typing import Any, Iterable
 
-VERSION = '1.0.0'
+VERSION = '1.1.0'
 TOOL = 'php2shell-coverage-check'
 HERE = Path(__file__).resolve().parent
 DEFAULT_PROFILE = HERE.parent / 'profiles' / 'php2shell.json'
@@ -130,11 +130,17 @@ def yes_no(value: str | None) -> bool | None:
     return None
 
 
+PARANOIA_LEVELS = {0: 'avoid false alarms', 1: 'normal', 2: 'paranoid'}
+
+
 def parse_scan_info(output: str | None) -> dict:
     """The fields of a 'Nessus Scan Information' (19506) output this tool uses."""
     feed_raw = field(output, 'Plugin feed version') or ''
     digits = re.sub(r'\D', '', feed_raw)
+    paranoia = (field(output, 'Paranoia level') or '').strip()
     return {
+        # The scan's report paranoia: some product plugins report only when it's paranoid.
+        'paranoia': int(paranoia) if paranoia.isdigit() else None,
         'feed': digits[:12] if len(digits) >= 8 else None,
         'credentialed': yes_no(field(output, 'Credentialed checks')),
         'scan_type': field(output, 'Scan type'),
@@ -242,6 +248,11 @@ def verdict(host: dict, profile: dict) -> dict:
         notes.append(f'feed {feed} is from the first days of coverage; later distro checks may be missing')
     if scan and scan.get('unpatched_checks') is False and distro:
         notes.append('"Scan for Unpatched Vulnerabilities" was off: distro packages without a vendor fix yet aren\'t flagged')
+    plugin_ids = {i.get('plugin_id') for i in installs}
+    for change in det.get('detection_changes', []):
+        if feed and feed < change['feed'] and not plugin_ids & set(change.get('not_for_plugins', [])):
+            notes.append(f'feed {feed} predates feed {change["feed"]}, where {change["change"]}: '
+                         f'{change["missed"]} may not have been detected')
 
     def result(v: str, reason: str, action: str) -> dict:
         return {'verdict': v, 'reason': reason, 'action': action, 'notes': notes}
@@ -289,6 +300,13 @@ def verdict(host: dict, profile: dict) -> dict:
     fixed_cve = [c for c in cves if c.get('state') == 'FIXED']
     if fixed_cve:
         return result(PATCHED, 'the PHP2Shell finding was reported fixed', 'none')
+    # Some vendors won't fix branches PHP no longer supports, and only the unpatched checks
+    # report those packages.
+    no_fix_distro = [i for i, g, _ in graded if i in distro and g == 'no-fix']
+    if no_fix_distro and scan.get('unpatched_checks') is False:
+        return result(UNVERIFIED, f'distro PHP {no_fix_distro[0].get("version")} is on a branch with no upstream fix, '
+                      'and "Scan for Unpatched Vulnerabilities" was off, so a package the vendor won\'t fix isn\'t reported',
+                      'rescan with "Scan for Unpatched Vulnerabilities" enabled')
     if any(g == 'fixed' for _, g, _ in graded) and not any(g in ('fixed-available', 'no-fix') for i, g, _ in graded if i not in distro):
         return result(PATCHED, 'detected PHP version includes the fix, and the last scan could have detected it', 'none')
     return result(NO_FINDING, 'credentialed scan with a current feed reported no PHP2Shell finding',
@@ -646,13 +664,15 @@ def evaluate(snap: dict, profile: dict) -> list[dict]:
             'last_scan': scan.get('seen') or '', 'plugin_feed': scan.get('feed') or '',
             'credentialed': {True: 'yes', False: 'no'}.get(scan.get('credentialed'), ''),
             'scan_type': scan.get('scan_type') or '', 'network': h.get('repository') or h.get('network') or '',
+            'report_paranoia': PARANOIA_LEVELS.get(scan.get('paranoia'), str(scan.get('paranoia') or '')),
         })
     order = {v: i for i, v in enumerate(VERDICTS)}
     rows.sort(key=lambda r: (order[r['verdict']], r['host']))
     return rows
 
 
-COLUMNS = ['host', 'ip', 'verdict', 'reason', 'action', 'php_versions', 'last_scan', 'plugin_feed', 'credentialed', 'notes']
+COLUMNS = ['host', 'ip', 'verdict', 'reason', 'action', 'php_versions', 'last_scan', 'plugin_feed', 'credentialed',
+           'report_paranoia', 'notes']
 
 
 def render_md(snap: dict, profile: dict, rows: list[dict], limit: int) -> str:
