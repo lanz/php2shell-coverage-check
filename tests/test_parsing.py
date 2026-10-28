@@ -14,12 +14,14 @@ def test_scan_info():
     assert info['unpatched_checks'] is True and info['component_checks'] is True and info['thorough'] is True
     assert info['policy'] == 'Advanced Scan' and info['scan_type'] == 'Normal'
     assert cc.parse_scan_info(SCAN_INFO_UNCREDENTIALED)['credentialed'] is False
+    assert info['paranoia'] == 1
+    assert cc.parse_scan_info(SCAN_INFO_NEW.replace('Paranoia level : 1', 'Paranoia level : 2'))['paranoia'] == 2
 
 
 def test_legacy_scan_info_lacks_fields():
     info = cc.parse_scan_info(SCAN_INFO_LEGACY)
     assert info['feed'] == '202301251200' and info['credentialed'] is False
-    assert info['unpatched_checks'] is None and info['component_checks'] is None
+    assert info['unpatched_checks'] is None and info['component_checks'] is None and info['paranoia'] is None
 
 
 def test_scan_info_from_security_center_wrapping():

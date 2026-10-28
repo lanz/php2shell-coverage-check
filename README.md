@@ -178,8 +178,14 @@ versions and the date the plugins were published) live in `profiles/php2shell.js
 ## Known limitations
 
 - **Only hosts where Tenable detected PHP appear.** Unauthenticated scans see PHP only when
-  a web server reveals its version, and inventory plugins can miss some installs. If another
-  tool shows PHP on a host this check doesn't list, rescan that host with credentials.
+  a web server reveals its version, and inventory plugins can miss some installs. Until
+  plugin feed 202610271613, Unix local detection didn't recognize PHP-FPM, so a host that
+  runs PHP only as PHP-FPM and was last scanned before then won't appear. If another tool
+  shows PHP on a host this check doesn't list, rescan that host with credentials.
+- **Appliances that bundle PHP aren't listed**, such as F5 BIG-IP, because the PHP
+  inventory plugins don't detect them. Their own advisory plugins report PHP2Shell, and
+  any finding they produce is included. F5's plugin (372182) reports only when the scan's
+  report paranoia is set to Paranoid; the CSV and JSON reports show each host's setting.
 - **Version grading is a guide.** Distro packages often carry backported fixes under an
   old version number. Those hosts aren't graded by version; distro plugins decide, and the
   report says so.

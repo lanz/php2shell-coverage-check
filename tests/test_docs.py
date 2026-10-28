@@ -46,3 +46,10 @@ def test_profile_is_consistent():
     assert det['min_feed'].startswith(det['first_plugin_published'].replace('-', ''))
     for branch, fixed in profile['versions']['fixed'].items():
         assert fixed.startswith(branch + '.')
+
+
+def test_detection_changes_are_well_formed():
+    profile = json.loads((ROOT / 'profiles' / 'php2shell.json').read_text(encoding='utf-8'))
+    for change in profile['detection'].get('detection_changes', []):
+        assert re.fullmatch(r'\d{12}', change['feed']) and change['feed'] >= profile['detection']['min_feed']
+        assert change['change'] and change['missed']
