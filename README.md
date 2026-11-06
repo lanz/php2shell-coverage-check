@@ -182,8 +182,8 @@ versions, and the date the plugins were published) live in `profiles/php2shell.j
   plugin feed 202610271613, Unix local detection didn't recognize PHP-FPM, so a host that
   runs PHP only as PHP-FPM and was last scanned before then won't appear. If another tool
   shows PHP on a host this check doesn't list, rescan that host with credentials.
-- **Appliances that bundle PHP aren't listed**, such as F5 BIG-IP, because the PHP
-  inventory plugins don't detect them. Their own advisory plugins report PHP2Shell, and
+- **Appliances that bundle PHP aren't listed**, such as F5 BIG-IP or NetScaler ADC and
+  Gateway, because the PHP inventory plugins don't detect them. Their own advisory plugins report PHP2Shell, and
   any finding they produce is included. F5's plugin (372182) reports only when the scan's
   report paranoia is set to Paranoid; the CSV and JSON reports show each host's setting.
 - **Version grading is a guide.** Distro packages often carry backported fixes under an
@@ -198,13 +198,16 @@ versions, and the date the plugins were published) live in `profiles/php2shell.j
 
 PHP2Shell coverage is evolving quickly. Tenable Research is still publishing plugins
 (distro advisories, unpatched-package checks, and product-specific checks) and updating its
-guidance, including recommended scan settings.
+guidance, including recommended scan settings. By 2026-11-06, about 124 plugins covered
+each CVE, all of them version-based; Tenable Research explains why it didn't release a
+direct check in
+[php2shell one week later](https://www.tenable.com/blog/php2shell-one-week-later-why-one-exploit-doesnt-work-everywhere).
 
 - **New plugins for the two CVEs are picked up automatically.** Findings are collected by
   CVE ID, not plugin ID.
 - **Everything else is in `profiles/php2shell.json`:** the inventory plugins, the date the
   plugins were published, the earliest plugin feed that can detect it, the fixed versions,
-  and the interim mitigations. They reflect coverage when this version was released.
+  and the interim mitigations. They reflect coverage and guidance as of 2026-11-06.
 - **This tool will be updated as coverage evolves.** Run `git pull` in the skill folder
   before each use while PHP2Shell is active, and check the releases page for changes.
 - **Tenable's guidance comes first.** If it differs from this tool, follow the

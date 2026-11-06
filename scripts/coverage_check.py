@@ -45,7 +45,7 @@ import zipfile
 from pathlib import Path
 from typing import Any, Iterable
 
-VERSION = '1.1.0'
+VERSION = '1.2.0'
 TOOL = 'php2shell-coverage-check'
 HERE = Path(__file__).resolve().parent
 DEFAULT_PROFILE = HERE.parent / 'profiles' / 'php2shell.json'

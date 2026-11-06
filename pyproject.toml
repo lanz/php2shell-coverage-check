@@ -1,6 +1,6 @@
 [project]
 name = "php2shell-coverage-check"
-version = "1.0.0"
+version = "1.2.0"
 description = "Find the hosts where a 'no PHP2Shell finding' result from Tenable can't be trusted."
 license = "MIT"
 license-files = ["LICENSE"]

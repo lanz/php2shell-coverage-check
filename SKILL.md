@@ -4,7 +4,7 @@ description: Checks that Tenable scanning is set up to detect PHP2Shell on every
 license: MIT
 metadata:
   author: Lance Duvall
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # PHP2Shell Coverage Check
@@ -24,7 +24,7 @@ a CVE finding.
 **PHP2Shell coverage is evolving quickly.** Tenable Research keeps publishing plugins and
 updating guidance. The CVE query picks up new plugins automatically; the profile
 (`profiles/php2shell.json`) records the inventory plugins, dates, and fixed versions as of
-this release and is updated as coverage changes. Point the user to the Tenable Research
+2026-11-06 and is updated as coverage changes. Point the user to the Tenable Research
 FAQ (linked in the profile) for current scan guidance.
 
 This skill checks scan coverage. For an exposure report, a fix order, or a threat hunt, the
