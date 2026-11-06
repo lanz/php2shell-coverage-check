@@ -6,11 +6,12 @@ Each host gets exactly one verdict, checked in this order. The first that applie
 
 An open (or reopened) finding from **any** plugin for CVE-2026-109618 or CVE-2026-109619:
 the version check (369483), distro advisory plugins, "unpatched" plugins, or product
-plugins for products that bundle PHP, such as F5 BIG-IP, PAN-OS, and Tenable Security
-Center.
+plugins for products that bundle PHP, such as F5 BIG-IP, PAN-OS, NetScaler ADC and
+Gateway, and Tenable Security Center.
 
 - **Action:** update PHP, or apply the vendor's patched package. Until then, apply the
-  interim mitigations and consider isolating internet-facing hosts.
+  interim mitigations and consider isolating internet-facing hosts. Fix internet-facing
+  appliances, their management interfaces, and end-of-life PHP first.
 - Notes are left out: a plugin has already decided.
 
 ## likely-vulnerable
@@ -69,8 +70,8 @@ Notes don't change the verdict, but always pass them on:
 - Hosts where Tenable never detected PHP. Inventory plugins can miss some installs, so if
   another tool shows PHP on a host the check doesn't list, rescan it with credentials. Until
   feed 202610271613, a Unix host that runs PHP only as PHP-FPM wasn't detected at all.
-- Appliances that bundle PHP, such as F5 BIG-IP, because the PHP inventory plugins don't
-  detect them. Their advisory plugins still report PHP2Shell, and those findings appear;
+- Appliances that bundle PHP, such as F5 BIG-IP or NetScaler ADC and Gateway, because the
+  PHP inventory plugins don't detect them. Their advisory plugins still report PHP2Shell, and those findings appear;
   F5's (372182) reports only when the scan's report paranoia is set to Paranoid. The
   `report_paranoia` column in the CSV and JSON reports shows each host's last setting.
 - PHP inside containers or images that these plugins don't scan. Use Tenable Cloud
