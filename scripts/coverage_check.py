@@ -96,7 +96,7 @@ def local_inventory_ids(profile: dict) -> set[int]:
 LABEL_RE = re.compile(r'^\s*([A-Za-z][\w ()/.-]{0,48}?)\s*:\s*(.*?)\s*$')
 
 
-def labelled(output: str | None) -> list[tuple[str, str]]:
+def labeled(output: str | None) -> list[tuple[str, str]]:
     """The 'Label : value' lines of a plugin output, in order."""
     out = []
     for line in strip_tags(output or '').splitlines():
@@ -112,7 +112,7 @@ def strip_tags(text: str) -> str:
 
 
 def field(output: str | None, name: str) -> str | None:
-    for k, v in labelled(output):
+    for k, v in labeled(output):
         if k.lower() == name.lower():
             return v
     return None
@@ -160,7 +160,7 @@ def parse_installs(output: str | None) -> list[dict]:
     already has repeats, which is how multiple installs are listed."""
     blocks: list[dict] = []
     current: dict = {}
-    for k, v in labelled(output):
+    for k, v in labeled(output):
         key = k.lower()
         if key not in BLOCK_KEYS and key not in ('associated package', 'managed by os', 'is component',
                                                   'backported', 'ini file', 'end of support date',
@@ -231,7 +231,7 @@ def grade(version: str | None, profile: dict) -> tuple[str, str | None]:
 
 
 def verdict(host: dict, profile: dict) -> dict:
-    """The verdict, its reason, an action and notes for one host from the snapshot."""
+    """The verdict, its reason, an action, and notes for one host from the snapshot."""
     det = profile['detection']
     min_feed, rec_feed = det['min_feed'], det.get('recommended_feed') or det['min_feed']
     scan = host.get('scan') or {}
@@ -279,7 +279,7 @@ def verdict(host: dict, profile: dict) -> dict:
                           f'update to {fix} or later; then rescan with credentials to confirm')
         if g == 'no-fix':
             return result(LIKELY, f'PHP {i.get("version")} has no official PHP2Shell fix, and no CVE plugin reports it',
-                          'upgrade to a fixed branch (8.2.35, 8.3.36, 8.4.27 or 8.5.12) or isolate the host')
+                          'upgrade to a fixed branch (8.2.35, 8.3.36, 8.4.27, or 8.5.12) or isolate the host')
 
     if not scan:
         return result(UNVERIFIED, 'no "Nessus Scan Information" result for this host, so the last scan can\'t be checked',
@@ -782,7 +782,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument('--version', action='version', version=VERSION)
     sub = parser.add_subparsers(dest='command', required=True)
 
-    p = sub.add_parser('collect', help='Read PHP inventory, PHP2Shell findings and scan information into a local snapshot.')
+    p = sub.add_parser('collect', help='Read PHP inventory, PHP2Shell findings, and scan information into a local snapshot.')
     p.add_argument('--platform', choices=['vm', 'sc'], default='vm')
     p.add_argument('--nessus', nargs='+', metavar='FILE', help='Read .nessus files instead of an API.')
     p.add_argument('--url', help='Platform URL (VM default: $TIO_URL or https://cloud.tenable.com; SC: $TSC_URL).')

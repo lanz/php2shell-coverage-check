@@ -10,7 +10,7 @@
     "first_plugin_published": "2026-10-21",
     "min_feed": "202610210000",
     "recommended_feed": "202610240000",
-    "notes": "Plugin 369483 and the first distro checks were published on 2026-10-21. Distro, unpatched and product checks were still being added on 2026-10-28, so a feed from 2026-10-21 to 2026-10-23 may lack many of them.",
+    "notes": "Plugin 369483 and the first distro checks were published on 2026-10-21. Distro, unpatched, and product checks were still being added on 2026-10-28, so a feed from 2026-10-21 to 2026-10-23 may lack many of them.",
     "detection_changes": [
       {
         "feed": "202610271613",
@@ -53,8 +53,8 @@
     "no_official_fix": "7.4 to 8.1 have only minimal source backports from the PHP security team; 7.3 and older are end-of-life."
   },
   "mitigations": [
-    "Update PHP to 8.2.35, 8.3.36, 8.4.27 or 8.5.12, or apply your distribution's patched package. Updating is the only complete fix. Restart every PHP worker afterwards: updated packages don't patch running processes.",
-    "Until then: set memory_limit=-1 and keep post_max_size small (for example 8M, or 32M with uploads), set session.upload_progress.enabled=0, and on PHP 8.5 also fatal_error_backtraces=0. Set them in php.ini, the FPM pool or the server configuration so applications can't override them, not with ini_set() or .user.ini, then restart every PHP worker. These reduce exposure but don't make an installation safe.",
+    "Update PHP to 8.2.35, 8.3.36, 8.4.27, or 8.5.12, or apply your distribution's patched package. Updating is the only complete fix. Restart every PHP worker afterwards: updated packages don't patch running processes.",
+    "Until then: set memory_limit=-1 and keep post_max_size small (for example 8M, or 32M with uploads), set session.upload_progress.enabled=0, and on PHP 8.5 also fatal_error_backtraces=0. Set them in php.ini, the FPM pool, or the server configuration so applications can't override them, not with ini_set() or .user.ini, then restart every PHP worker. These reduce exposure but don't make an installation safe.",
     "Don't use RLIMIT_AS or RLIMIT_DATA as a memory cap: they can trigger the vulnerable allocation failure. Use a container or cgroup limit instead.",
     "PHP 8.1 and older have no official release: upgrade, use a distribution or LTS vendor fix, or isolate the system.",
     "PHP 8.4.27 and 8.5.12 can crash some applications that use SimpleXML (php-src #24488, a separate change). Test before rolling out, and check php.net for the follow-up release."

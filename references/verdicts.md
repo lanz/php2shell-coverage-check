@@ -6,7 +6,7 @@ Each host gets exactly one verdict, checked in this order. The first that applie
 
 An open (or reopened) finding from **any** plugin for CVE-2026-109618 or CVE-2026-109619:
 the version check (369483), distro advisory plugins, "unpatched" plugins, or product
-plugins for products that bundle PHP, such as F5 BIG-IP, PAN-OS and Tenable Security
+plugins for products that bundle PHP, such as F5 BIG-IP, PAN-OS, and Tenable Security
 Center.
 
 - **Action:** update PHP, or apply the vendor's patched package. Until then, apply the
@@ -15,7 +15,7 @@ Center.
 
 ## likely-vulnerable
 
-No PHP2Shell plugin reports the host, but an inventory plugin (48243, 58987, 216936 or
+No PHP2Shell plugin reports the host, but an inventory plugin (48243, 58987, 216936, or
 200476) shows a PHP version that's affected and isn't distro-managed:
 
 | Reason | Why it happens |
@@ -23,7 +23,7 @@ No PHP2Shell plugin reports the host, but an inventory plugin (48243, 58987, 216
 | `PHP x is below <fixed>` | Usually the last scan predates the plugins (see the notes), or the CVE plugin didn't run |
 | `PHP x has no official PHP2Shell fix` | PHP 8.1 and older. In testing, hosts that plugin 58987 (unsupported version) flagged had no CVE finding, so CVE-based views showed nothing |
 
-- **Action:** upgrade to 8.2.35, 8.3.36, 8.4.27 or 8.5.12, or isolate the host. Rescan
+- **Action:** upgrade to 8.2.35, 8.3.36, 8.4.27, or 8.5.12, or isolate the host. Rescan
   with credentials afterwards to confirm.
 
 ## unverified

@@ -8,7 +8,7 @@ Tenable detects PHP2Shell once a host is scanned with the PHP2Shell plugins and 
 settings. Hosts that haven't had that scan yet show no finding, the same as patched hosts.
 This tool tells them apart. For every PHP host, it joins:
 
-- the PHP installs Tenable detected (plugins 48243, 58987, 216936 and 200476), with versions
+- the PHP installs Tenable detected (plugins 48243, 58987, 216936, and 200476), with versions
 - every finding for the two CVEs, from any plugin, including distro and "unpatched" checks
 - the host's latest **Nessus Scan Information** (plugin 19506), which records the plugin
   feed the scan used, whether it was credentialed, and settings such as "Assess component
@@ -39,7 +39,7 @@ vulnerable.
   hosts, you get every PHP host sorted into vulnerable, needs a rescan, or done, each with
   the reason and the fix.
 - **Finds the scan settings that matter.** It reads the plugin feed, credentials, "Assess
-  component installs" and "Scan for Unpatched Vulnerabilities" from each host's last scan,
+  component installs", and "Scan for Unpatched Vulnerabilities" from each host's last scan,
   so you see which hosts need a fresh, credentialed scan, and which scan policies to change.
 - **Flags end-of-life PHP.** PHP 8.1 and older have no fixed release. The tool grades the
   detected version, so these hosts appear even when no CVE finding exists for them yet.
@@ -48,7 +48,7 @@ vulnerable.
   plugins rather than grading the version.
 - **Gives you the rescan list** (`targets`), one address per line, ready to paste into a
   scan.
-- **Works where you already are.** Vulnerability Management, Security Center or plain
+- **Works where you already are.** Vulnerability Management, Security Center, or plain
   `.nessus` exports, with read-only API access.
 - **Helps you answer leadership with confidence.** "N hosts vulnerable, M patched, K
   rescans scheduled" is a better status than a finding count alone.
@@ -62,8 +62,8 @@ those: *are our scans set up to find it everywhere?*
 | | Answers | Data source |
 |---|---|---|
 | **PHP2Shell Coverage Check** (this) | Which PHP hosts have been scanned in a way that can detect PHP2Shell, and which need a rescan or settings change | Vulnerability Management or Security Center API, or `.nessus` files |
-| [PHP2Shell Tenable Skill](https://github.com/securibee/php2shell-tenable-skill) | Which assets are exposed, graded against the fixed releases, as an HTML, PDF and CSV report | Tenable One, through Hexa AI MCP |
-| [PHP2Shell Response Playbook](https://github.com/jtbuchanan-tenb/php2shell-playbook) | Find, fix and hunt: exposure, a fix order, and a threat hunt in your SIEM and EDR | Tenable One through Hexa AI MCP, plus SIEM and EDR |
+| [PHP2Shell Tenable Skill](https://github.com/securibee/php2shell-tenable-skill) | Which assets are exposed, graded against the fixed releases, as an HTML, PDF, and CSV report | Tenable One, through Hexa AI MCP |
+| [PHP2Shell Response Playbook](https://github.com/jtbuchanan-tenb/php2shell-playbook) | Find, fix, and hunt: exposure, a fix order, and a threat hunt in your SIEM and EDR | Tenable One through Hexa AI MCP, plus SIEM and EDR |
 
 They work well together:
 
@@ -85,7 +85,7 @@ includes the fixed versions and interim mitigations.
     `TIO_ACCESS_KEY` and `TIO_SECRET_KEY`, and `TIO_URL` if you don't use
     `cloud.tenable.com`.
   - **Tenable Security Center:** an API key pair for an organization user (administrators
-    can't see vulnerability data), and the URL. Set `TSC_ACCESS_KEY`, `TSC_SECRET_KEY` and
+    can't see vulnerability data), and the URL. Set `TSC_ACCESS_KEY`, `TSC_SECRET_KEY`, and
     `TSC_URL`.
   - **Nessus:** one or more `.nessus` exports. Any edition can export them from its UI, so
     no API access is needed. Security Center scan results download as a `.zip` holding the
@@ -122,7 +122,7 @@ uv run scripts/coverage_check.py report --verdict unverified likely-vulnerable
 uv run scripts/coverage_check.py targets > rescan.txt             # one address per line
 ```
 
-Use `--env-prefix PROD` to read `PROD_ACCESS_KEY`, `PROD_SECRET_KEY` and `PROD_URL`
+Use `--env-prefix PROD` to read `PROD_ACCESS_KEY`, `PROD_SECRET_KEY`, and `PROD_URL`
 instead, and `--snapshot` to choose where the snapshot goes.
 
 ## Output
@@ -142,7 +142,7 @@ The markdown report starts with the verdict counts and the reasons hosts are unv
 ```
 
 It then lists each host to act on with its reason, action, PHP versions, last scan, plugin
-feed and whether it was credentialed. CSV and JSON include every host and a `notes` column.
+feed, and whether it was credentialed. CSV and JSON include every host and a `notes` column.
 [references/verdicts.md](references/verdicts.md) explains every verdict and reason.
 
 ## How it works
@@ -150,7 +150,7 @@ feed and whether it was credentialed. CSV and JSON include every host and a `not
 - **Vulnerability Management:** two vulnerability exports.
   1. The inventory plugins plus plugin 19506, open findings from the last 400 days
      (`--since-days` changes the window).
-  2. Every finding for the two CVEs (open, reopened and fixed), filtered by CVE ID, so new
+  2. Every finding for the two CVEs (open, reopened, and fixed), filtered by CVE ID, so new
      distro plugins are included automatically.
 - **Security Center:** the same data through cumulative and patched analysis queries.
 - **`.nessus` files**, or zips of them: the latest scan of each host wins, so pass older
@@ -158,7 +158,7 @@ feed and whether it was credentialed. CSV and JSON include every host and a `not
 
 Verdicts are computed when you run `report`, so the snapshot doesn't need to be collected
 again if the verdict rules change. The PHP2Shell specifics (CVEs, plugin IDs, fixed
-versions and the date the plugins were published) live in `profiles/php2shell.json`.
+versions, and the date the plugins were published) live in `profiles/php2shell.json`.
 
 ## Data handling and network access
 
@@ -170,7 +170,7 @@ versions and the date the plugins were published) live in `profiles/php2shell.js
   `--insecure` turns verification off and isn't recommended.
 - **Credentials** come from environment variables only and are never written anywhere.
 - **The snapshot** (under `~/.cache/php2shell-coverage-check/`, or `PHP2SHELL_CHECK_HOME`)
-  lists host names, addresses, PHP versions and scan settings. It's written with owner-only
+  lists host names, addresses, PHP versions, and scan settings. It's written with owner-only
   permissions. Treat it as internal and don't commit it.
 - **With the skill**, the assistant reads the report, so host names in it go to the model
   provider like anything else you share.
@@ -197,13 +197,13 @@ versions and the date the plugins were published) live in `profiles/php2shell.js
 ## Keeping up with PHP2Shell coverage
 
 PHP2Shell coverage is evolving quickly. Tenable Research is still publishing plugins
-(distro advisories, unpatched-package checks and product-specific checks) and updating its
+(distro advisories, unpatched-package checks, and product-specific checks) and updating its
 guidance, including recommended scan settings.
 
 - **New plugins for the two CVEs are picked up automatically.** Findings are collected by
   CVE ID, not plugin ID.
 - **Everything else is in `profiles/php2shell.json`:** the inventory plugins, the date the
-  plugins were published, the earliest plugin feed that can detect it, the fixed versions
+  plugins were published, the earliest plugin feed that can detect it, the fixed versions,
   and the interim mitigations. They reflect coverage when this version was released.
 - **This tool will be updated as coverage evolves.** Run `git pull` in the skill folder
   before each use while PHP2Shell is active, and check the releases page for changes.
@@ -232,5 +232,5 @@ This is an independent open source community project. It is not an official Tena
 product and is not affiliated with, sponsored by, endorsed by, or supported by
 Tenable, Inc.
 
-Tenable, Nessus and other Tenable product names are trademarks or registered trademarks
+Tenable, Nessus, and other Tenable product names are trademarks or registered trademarks
 of Tenable, Inc. Other names may be trademarks of their respective owners.

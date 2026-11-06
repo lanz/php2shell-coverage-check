@@ -1,4 +1,4 @@
-"""The verdict for each combination of findings, inventory and scan information."""
+"""The verdict for each combination of findings, inventory, and scan information."""
 
 import coverage_check as cc
 from conftest import (PHP_REMOTE, PHP_REMOTE_BACKPORTED, PHP_UNIX_COMPONENT_PATCHED, PHP_UNIX_DISTRO,

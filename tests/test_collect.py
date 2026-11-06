@@ -1,4 +1,4 @@
-"""Collection from .nessus files, the VM API and the Security Center API, and the CLI."""
+"""Collection from .nessus files, the VM API, and the Security Center API, and the CLI."""
 
 import argparse
 import csv
